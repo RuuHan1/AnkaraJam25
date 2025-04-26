@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CarController : MonoBehaviour
 {
+    public bool auto = false;
     [Header("Car Settings")]
     public float accelerationFactor = 30f;
     public float turnFactor = 3.5f;
@@ -30,8 +31,8 @@ public class CarController : MonoBehaviour
 
     private void Update()
     {
-        accelerationInput = Input.GetAxis("Vertical");
-        steeringInput = Input.GetAxis("Horizontal");
+        accelerationInput = auto ? 1 : Input.GetAxis("Vertical");
+        steeringInput = auto ? 0 : Input.GetAxis("Horizontal");
 
         if (steeringInput > 0.01f)
             steerState = 1;
@@ -41,8 +42,6 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //CheckRotationLimit();
-
         ApplyEngineForce();
         KillOrthogonalVelocity();
         ApplySteering();
@@ -89,17 +88,5 @@ public class CarController : MonoBehaviour
         float maxAv = maxAngularSpeed * speedFactor;
         angVel.y = Mathf.Clamp(angVel.y, -maxAv, maxAv);
         rb.angularVelocity = angVel;
-    }
-
-    private void CheckRotationLimit()
-    {
-        float eulerAngleY = transform.eulerAngles.y;
-        float y = eulerAngleY > 180f ? eulerAngleY - 360f : eulerAngleY;
-
-        if (y > maxAngle || y < -maxAngle)
-        {
-            Time.timeScale = 0f;
-            Debug.Log("Rotation limit exceeded. Game stopped.");
-        }
     }
 }
