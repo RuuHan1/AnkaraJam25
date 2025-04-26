@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,12 +24,13 @@ public class ZombieFollow : MonoBehaviour
     //States
     public float sightRange;
     public bool carInSightRange, carInJumpRange;
-
-
+    [SerializeField] private Animator animator;
+    private bool isStopped = false;
     private void Awake()
     {
         agent.enabled = true;
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
         //carTransform = GameObject.Find("Car").transform;
     }
     private void Start()
@@ -39,18 +41,21 @@ public class ZombieFollow : MonoBehaviour
     {
         carInSightRange = Physics.CheckSphere(transform.position, followRadius, carMask);
         carInJumpRange = Physics.CheckSphere(transform.position, jumpRadius, carMask);
-        //if(!carInSightRange && !carInJumpRange && !isAgentEnabled) {  }
-        if(carInSightRange && !carInJumpRange && !isAgentEnabled){ FollowCar(); }
-        if (carInSightRange && carInJumpRange) { 
-            
+        //if(!carInSightRange && !carInJumpRange && !isAgentEnabled) { animator.SetFloat("Speed", 0f); }
+        if (carInSightRange && !carInJumpRange && !isAgentEnabled){ FollowCar(); }
+        if (carInSightRange && carInJumpRange) {
+
             
             JumpAtCar(); }
+        
     }
 
     private void Patrolling()
     {
         if (!walkPointSet) { SerchWalkPoint(); }
-        if (walkPointSet) { agent.SetDestination(walkPoint);}
+        if (walkPointSet) { agent.SetDestination(walkPoint);
+        
+        }
 
         Vector3 distaceToWalkPoint = transform.position - walkPoint;
         if(distaceToWalkPoint.magnitude < 1f)
@@ -62,16 +67,24 @@ public class ZombieFollow : MonoBehaviour
     {
         float RandomZ = Random.Range(-followRadius, followRadius);
         float RandomX = Random.Range(-followRadius, followRadius);
-
+        
         walkPoint = new Vector3(transform.position.x +RandomX, transform.position.y, transform.position.z + RandomZ);
         if (Physics.Raycast(walkPoint, -transform.up, 2f, groundMask))
         {
             walkPointSet = true;
+            
         }
     }
     private void FollowCar()
     {
+        animator.SetFloat("Speed", 1f);
         agent.SetDestination(carTransform.position);
+        
+        if (!isStopped) 
+        {
+            StartCoroutine(IdleState());
+        }
+
     }
 
     private void JumpAtCar()
@@ -81,6 +94,8 @@ public class ZombieFollow : MonoBehaviour
         // Eðer daha önce zýplamadýysak, zýplama iþlemini baþlat
         if (!jumped)
         {
+            
+            animator.SetBool("isStopped",true);
             // Araba pozisyonuna doðru hareket etmeye baþla
             agent.SetDestination(carTransform.position);
             transform.LookAt(carTransform);
@@ -104,7 +119,7 @@ public class ZombieFollow : MonoBehaviour
             rb.AddForce(jumpDir, ForceMode.Impulse);
             
         }
-        Destroy(gameObject,3f);
+        Destroy(gameObject,10f);
         // Zýplama iþlemi tamamlandýktan sonra NavMeshAgent'i tekrar etkinleþtir
         //StartCoroutine(ReactivateNavMeshAgent());
     }
@@ -133,5 +148,12 @@ public class ZombieFollow : MonoBehaviour
         // NavMeshAgent'i tekrar etkinleþtir
         agent.enabled = true;
         agent.isStopped = false;
+    }
+    private IEnumerator IdleState()
+    {
+        isStopped = true;
+        yield return new WaitForSeconds(8f);
+        animator.SetFloat("Speed", 0f);
+        isStopped = false;
     }
 }
