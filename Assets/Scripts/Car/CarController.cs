@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CarController : MonoBehaviour
 {
+    [SerializeField]
+    private Bar fuelBar;
     public bool auto = false;
     [Header("Car Settings")]
     public float accelerationFactor = 30f;
@@ -43,6 +45,11 @@ public class CarController : MonoBehaviour
         else if (steeringInput < -0.01f)
             steerState = -1;
         ManageEngineSound();
+
+        if (rb.linearVelocity.magnitude > 0.1f && fuelBar != null)
+        {
+            fuelBar.SetValue(fuelBar.CurrentValue - Time.deltaTime * 0.1f);
+        }
     }
 
     private void FixedUpdate()
@@ -100,7 +107,7 @@ public class CarController : MonoBehaviour
         {
             if (!isEngineSoundPlaying)
             {
-                AudioMan.Instance.PlayMusic(AudioMan.SoundType.Engine); // Motor sesi loop yapýlmýþ müzik gibi çalýyor
+                AudioMan.Instance.PlayMusic(AudioMan.SoundType.Engine); // Motor sesi loop yapï¿½lmï¿½ï¿½ mï¿½zik gibi ï¿½alï¿½yor
                 isEngineSoundPlaying = true;
             }
         }

@@ -3,19 +3,19 @@ using UnityEngine;
 public class Car : MonoBehaviour, IDamageable
 {
     [SerializeField]
-    private float maxHealth;
+    private float maxfuel;
 
-    private float curentHealth;
+    private float curentFuel;
 
     private void Start()
     {
-        curentHealth = maxHealth;
+        curentFuel = maxfuel;
     }
 
     public void TakeDamage(float damage)
     {
-        curentHealth -= damage;
-        if (curentHealth <= 0) Die();
+        curentFuel -= damage;
+        if (curentFuel <= 0) Die();
     }
 
     public void Die()
