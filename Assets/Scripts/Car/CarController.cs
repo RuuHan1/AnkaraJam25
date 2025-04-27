@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CarController : MonoBehaviour
 {
+    [SerializeField]
+    private Bar fuelBar;
     public bool auto = false;
     [Header("Car Settings")]
     public float accelerationFactor = 30f;
@@ -38,6 +40,11 @@ public class CarController : MonoBehaviour
             steerState = 1;
         else if (steeringInput < -0.01f)
             steerState = -1;
+
+        if (rb.linearVelocity.magnitude > 0.1f && fuelBar != null)
+        {
+            fuelBar.SetValue(fuelBar.CurrentValue - Time.deltaTime * 0.1f);
+        }
     }
 
     private void FixedUpdate()
