@@ -119,7 +119,8 @@ public class ZombieFollow : MonoBehaviour
             rb.AddForce(jumpDir, ForceMode.Impulse);
             
         }
-        Destroy(gameObject,10f);
+        //Destroy(gameObject,10f);
+        enabled = false;
         // Zýplama iþlemi tamamlandýktan sonra NavMeshAgent'i tekrar etkinleþtir
         //StartCoroutine(ReactivateNavMeshAgent());
     }

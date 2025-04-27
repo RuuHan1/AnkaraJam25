@@ -42,7 +42,7 @@ public class PenguenFollow : MonoBehaviour
         // Araba hedefiyle arasýndaki yönü hesapla
         Vector3 directionToCar = (carTransform.position - transform.position).normalized;
 
-        // Ayýyý hedefe doðru hareket ettir
+        
         Vector3 moveDirection = directionToCar * moveSpeed * Time.deltaTime;
 
         // Hareketi uygula
@@ -51,6 +51,7 @@ public class PenguenFollow : MonoBehaviour
         // Dönüþ
         Quaternion targetRotation = Quaternion.LookRotation(directionToCar);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+
     }
 
     private void DashAtCar()
@@ -73,14 +74,15 @@ public class PenguenFollow : MonoBehaviour
 
             // Zýplama kuvvetini hesapla
             // Kuvveti artýrarak daha yüksek zýplama saðla
-            
+
 
             // Kuvveti uygula
+            //transform.right = direction;
             rb.AddForce(direction*linearJumpForece, ForceMode.Impulse);
 
         }
         Destroy(gameObject, 5f);
-        // Zýplama iþlemi tamamlandýktan sonra NavMeshAgent'i tekrar etkinleþtir
+        
         //StartCoroutine(ReactivateNavMeshAgent());
     }
     private void OnDrawGizmosSelected()
