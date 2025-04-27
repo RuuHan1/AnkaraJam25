@@ -20,6 +20,7 @@ public class CarController : MonoBehaviour
 
     float velocityVsForward;
     Rigidbody rb;
+    private bool isEngineSoundPlaying = false;
 
     private void Awake()
     {
@@ -28,7 +29,10 @@ public class CarController : MonoBehaviour
         rb.angularDamping = 0f;
         rb.linearDamping = 0f;
     }
-
+    private void Start()
+    {
+        AudioMan.Instance.PlayMusic(AudioMan.SoundType.EngineWait, 0.5f);
+    }
     private void Update()
     {
         accelerationInput = auto ? 1 : Input.GetAxis("Vertical");
@@ -38,6 +42,7 @@ public class CarController : MonoBehaviour
             steerState = 1;
         else if (steeringInput < -0.01f)
             steerState = -1;
+        ManageEngineSound();
     }
 
     private void FixedUpdate()
@@ -88,5 +93,24 @@ public class CarController : MonoBehaviour
         float maxAv = maxAngularSpeed * speedFactor;
         angVel.y = Mathf.Clamp(angVel.y, -maxAv, maxAv);
         rb.angularVelocity = angVel;
+    }
+    private void ManageEngineSound()
+    {
+        if (Mathf.Abs(accelerationInput) > 0.5f)
+        {
+            if (!isEngineSoundPlaying)
+            {
+                AudioMan.Instance.PlayMusic(AudioMan.SoundType.Engine); // Motor sesi loop yapýlmýþ müzik gibi çalýyor
+                isEngineSoundPlaying = true;
+            }
+        }
+        else
+        {
+            if (isEngineSoundPlaying)
+            {
+                AudioMan.Instance.FadeOutMusic(0.5f);
+                isEngineSoundPlaying = false;
+            }
+        }
     }
 }

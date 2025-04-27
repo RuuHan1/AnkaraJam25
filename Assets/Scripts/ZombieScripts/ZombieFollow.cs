@@ -26,6 +26,7 @@ public class ZombieFollow : MonoBehaviour
     public bool carInSightRange, carInJumpRange;
     [SerializeField] private Animator animator;
     private bool isStopped = false;
+    private bool isZombieTriggered = false;
     private void Awake()
     {
         agent.enabled = true;
@@ -42,10 +43,13 @@ public class ZombieFollow : MonoBehaviour
         carInSightRange = Physics.CheckSphere(transform.position, followRadius, carMask);
         carInJumpRange = Physics.CheckSphere(transform.position, jumpRadius, carMask);
         //if(!carInSightRange && !carInJumpRange && !isAgentEnabled) { animator.SetFloat("Speed", 0f); }
-        if (carInSightRange && !carInJumpRange && !isAgentEnabled){ FollowCar(); }
-        if (carInSightRange && carInJumpRange) {
-
+        if (carInSightRange && !carInJumpRange && !isAgentEnabled){ 
+            FollowCar();
             
+        }
+        if (carInSightRange && carInJumpRange) {
+            
+
             JumpAtCar(); }
         
     }
@@ -79,10 +83,11 @@ public class ZombieFollow : MonoBehaviour
     {
         animator.SetFloat("Speed", 1f);
         agent.SetDestination(carTransform.position);
-        
+        if (!isZombieTriggered) { AudioMan.Instance.PlaySFX(AudioMan.SoundType.Zombie); isZombieTriggered = true; }
         if (!isStopped) 
         {
             StartCoroutine(IdleState());
+            isZombieTriggered = false;
         }
 
     }
@@ -100,9 +105,9 @@ public class ZombieFollow : MonoBehaviour
             agent.SetDestination(carTransform.position);
             transform.LookAt(carTransform);
             agent.isStopped = true;
-            agent.enabled = false;
+            //agent.enabled = false;
             jumped = true;
-
+            enabled = false;
             // NavMeshAgent'ý geçici olarak devre dýþý býrak
             
 
@@ -117,10 +122,10 @@ public class ZombieFollow : MonoBehaviour
 
             // Kuvveti uygula
             rb.AddForce(jumpDir, ForceMode.Impulse);
-            
+            AudioMan.Instance.PlaySFX(AudioMan.SoundType.ZombieJump);
         }
         //Destroy(gameObject,10f);
-        enabled = false;
+        //enabled = false;
         // Zýplama iþlemi tamamlandýktan sonra NavMeshAgent'i tekrar etkinleþtir
         //StartCoroutine(ReactivateNavMeshAgent());
     }
