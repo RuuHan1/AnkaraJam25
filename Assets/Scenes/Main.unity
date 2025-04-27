@@ -1036,6 +1036,14 @@ PrefabInstance:
       propertyPath: m_Interpolate
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8210152267544375689, guid: 5b43df98d6569b048aa7bd6c1bfccc8c, type: 3}
+      propertyPath: simulationSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8210152267544375689, guid: 5b43df98d6569b048aa7bd6c1bfccc8c, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8494692763986173618, guid: 5b43df98d6569b048aa7bd6c1bfccc8c, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.75
